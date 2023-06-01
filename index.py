@@ -1,10 +1,37 @@
-from src.config.mt5 import Metatrader
-from src.recordings.tick_recorder import TickRecorder
-from src.testes.print_orders import PrintOrders
-from src.charts.volume import VolumeChart
-from src.charts.chart import BarChart
+import matplotlib.pyplot as plt
 
 
+class BarChart:
+    def __init__(self, categories):
+        self.categories = categories
+        self.values = [0] * len(categories)
+        self.colors = {1: "blue", 2: "red"}
+
+        self.fig, self.ax = plt.subplots()
+        self.bar_plot = self.ax.bar(
+            range(len(self.categories)), self.values, color="gray"
+        )
+
+        plt.xlabel("Preço")
+        plt.ylabel("Volume")
+        plt.title("Gráfico de Barras")
+
+    def update_values(self, data):
+        self.values = [item["volume"] for item in data]
+        colors = [self.colors[item["type"]] for item in data]
+
+        for bar, value, color in zip(self.bar_plot, self.values, colors):
+            bar.set_height(value)
+            bar.set_color(color)
+
+        plt.xticks(range(len(self.categories)), self.categories)
+        plt.draw()
+
+        # Exibir o gráfico
+        plt.show()
+
+
+# Exemplo de uso
 data = [
     {"type": 1, "price": 108890.0, "volume": 578},
     {"type": 1, "price": 108880.0, "volume": 842},
