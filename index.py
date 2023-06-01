@@ -1,43 +1,90 @@
+#  import matplotlib.pyplot as plt
+# import numpy as np
+
+
+# class BarChart:
+#     def __init__(self, categories):
+#         self.categories = categories
+#         self.values = [0] * len(categories)
+#         self.colors = {1: "blue", 2: "red"}
+
+#         self.fig, self.ax = plt.subplots()
+#         self.bar_plot = self.ax.barh(
+#             np.arange(len(self.categories)), self.values, color="gray"
+#         )
+
+#         plt.xlabel("Volume")
+#         plt.ylabel("Preço")
+#         plt.title("Gráfico de Barras")
+
+#     def update_values(self, data):
+#         self.values = [item["volume"] for item in data]
+#         colors = [self.colors[item["type"]] for item in data]
+
+#         self.ax.clear()
+#         self.bar_plot = self.ax.barh(
+#             np.arange(len(self.categories)), self.values, color=colors
+#         )
+
+#         plt.yticks(np.arange(len(self.categories)), self.categories)
+#         plt.draw()
+
+#         # Exibir o gráfico
+#         plt.show()
+
+
+# # Exemplo de uso
+# data = [
+#     {"type": 1, "price": 108890.0, "volume": 578},
+#     {"type": 1, "price": 108880.0, "volume": 842},
+#     {"type": 1, "price": 108870.0, "volume": 243},
+#     {"type": 2, "price": 108860.0, "volume": 153},
+#     {"type": 2, "price": 108850.0, "volume": 453},
+#     {"type": 2, "price": 108840.0, "volume": 244},
+# ]
+
+# categories = [item["price"] for item in data]
+# chart = BarChart(categories)
+
+# chart.update_values(data)
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 
 class BarChart:
-    def __init__(self, categories):
-        self.categories = categories
-        self.values = [0] * len(categories)
+    def __init__(self, data):
+        self.data = data
+        self.categories = [item["price"] for item in data]
+        self.values = [item["volume"] for item in data]
         self.colors = {1: "blue", 2: "red"}
 
-        self.fig, (self.ax1, self.ax2) = plt.subplots(2, 1, figsize=(8, 6))
-        self.bar_plot = self.ax1.barh(
+        self.fig, self.ax = plt.subplots(figsize=(8, 6))
+        self.bar_plot = self.ax.bar(
             np.arange(len(self.categories)), self.values, color="gray"
         )
-        self.average_bar = self.ax2.bar(0, 0, color="green")
-
-        self.ax1.set_xlabel("Volume")
-        self.ax1.set_ylabel("Preço")
-        self.ax1.set_title("Gráfico de Barras")
-        self.ax2.set_xlim(-0.5, 0.5)
-        self.ax2.set_ylim(0, max(self.values) * 1.1)
-        self.ax2.set_xticks([])
-        self.ax2.set_yticks([])
-        self.ax2.spines["left"].set_visible(False)
-        self.ax2.spines["right"].set_visible(False)
-        self.ax2.spines["top"].set_visible(False)
-        self.ax2.spines["bottom"].set_visible(False)
-
-    def update_values(self, data):
-        self.values = [item["volume"] for item in data]
-        colors = [self.colors[item["type"]] for item in data]
-        average_volume = np.mean(self.values)
-
-        self.bar_plot = self.ax1.barh(
-            np.arange(len(self.categories)), self.values, color=colors
+        self.sum_bar = self.ax.bar(
+            0, sum(self.values), color="green", label="Soma dos Volumes"
         )
-        self.average_bar[0].set_height(average_volume)
+        self.avg_bar = self.ax.bar(
+            0, np.mean(self.values), color="orange", label="Média dos Volumes"
+        )
 
-        self.ax1.set_yticks(np.arange(len(self.categories)))
-        self.ax1.set_yticklabels(self.categories)
+        self.ax.set_xlabel("Preço")
+        self.ax.set_ylabel("Volume")
+        self.ax.set_title("Gráfico de Barras")
+        self.ax.set_xticks(np.arange(len(self.categories)))
+        self.ax.set_xticklabels(self.categories)
+        self.ax.legend()
+
+    def update_chart(self):
+        self.values = [item["volume"] for item in self.data]
+        self.bar_plot = self.ax.bar(
+            np.arange(len(self.categories)), self.values, color="gray"
+        )
+        self.sum_bar[0].set_height(sum(self.values))
+        self.avg_bar[0].set_height(np.mean(self.values))
 
         plt.draw()
         plt.show()
@@ -53,7 +100,6 @@ data = [
     {"type": 2, "price": 108840.0, "volume": 244},
 ]
 
-categories = [item["price"] for item in data]
-chart = BarChart(categories)
+chart = BarChart(data)
 
-chart.update_values(data)
+chart.update_chart()
