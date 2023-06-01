@@ -1,34 +1,24 @@
-import random
 import matplotlib.pyplot as plt
 
 
 class VolumeChart:
-    def plot(self):
-        # Dados iniciais
-        categorias = ["Categoria 1", "Categoria 2", "Categoria 3"]
+    def __init__(self):
+        categorias = ["109045", "109050", "109055"]
         valores = [10, 15, 12]
 
-        # Configurar o gráfico inicial
         fig, ax = plt.subplots()
-        bar_plot = ax.barh(categorias, valores)
+        self.bar_plot = ax.barh(categorias, valores)
 
-        # Definir as propriedades do gráfico
-        plt.xlabel("Valores")
-        plt.ylabel("Categorias")
+        plt.xlabel("Volumes")
+        plt.ylabel("Prices")
         plt.title("Gráfico de Barras Horizontal")
 
-        # Atualizar os valores em tempo real
-        while True:
-            # Gerar novos valores aleatórios
-            novos_valores = [random.randint(5, 20) for _ in range(len(valores))]
+    def plot(self, values):
+        for bar, newValue in zip(self.bar_plot, values):
+            bar.set_width(newValue)
 
-            # Atualizar os valores do gráfico de barras
-            for bar, novo_valor in zip(bar_plot, novos_valores):
-                bar.set_width(novo_valor)
+        plt.draw()
+        plt.pause(1)
 
-            # Atualizar o gráfico
-            plt.draw()
-            plt.pause(1)  # Pausa por 1 segundo
-
-        # Fechar a janela ao interromper o programa
+    def close():
         plt.close()

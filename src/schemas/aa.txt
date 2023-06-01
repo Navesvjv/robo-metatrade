@@ -1,3 +1,10 @@
-{'type': 1, 'price': 108890.0, 'volume': 578, 'volume_dbl': 578.0}
+[
+    {'type': 1, 'price': 108890.0, 'volume': 578},
+    {'type': 1, 'price': 108880.0, 'volume': 842},
+    {'type': 1, 'price': 108870.0, 'volume': 243},
+    {'type': 2, 'price': 108860.0, 'volume': 153},
+    {'type': 2, 'price': 108850.0, 'volume': 453},
+    {'type': 2, 'price': 108840.0, 'volume': 244}
+]
 
 {'time': 1685538038, 'bid': 108955.0, 'ask': 108960.0, 'last': 108960.0, 'volume': 16, 'time_msc': 1685538038360, 'flags': 56, 'volume_real': 16.0}
