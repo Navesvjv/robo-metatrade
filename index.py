@@ -8,28 +8,38 @@ class BarChart:
         self.values = [0] * len(categories)
         self.colors = {1: "blue", 2: "red"}
 
-        self.fig, self.ax = plt.subplots()
-        self.bar_plot = self.ax.barh(
+        self.fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
+        self.bar_plot = ax1.barh(
             np.arange(len(self.categories)), self.values, color="gray"
         )
+        self.average_bar = ax2.bar(0, 0, color="green")
 
-        plt.xlabel("Volume")
-        plt.ylabel("Preço")
-        plt.title("Gráfico de Barras")
+        ax1.set_xlabel("Volume")
+        ax1.set_ylabel("Preço")
+        ax1.set_title("Gráfico de Barras")
+        ax2.set_xlim(-0.5, 0.5)
+        ax2.set_ylim(0, max(self.values) * 1.1)
+        ax2.set_xticks([])
+        ax2.set_yticks([])
+        ax2.spines["left"].set_visible(False)
+        ax2.spines["right"].set_visible(False)
+        ax2.spines["top"].set_visible(False)
+        ax2.spines["bottom"].set_visible(False)
 
     def update_values(self, data):
         self.values = [item["volume"] for item in data]
         colors = [self.colors[item["type"]] for item in data]
+        average_volume = np.mean(self.values)
 
-        self.ax.clear()
-        self.bar_plot = self.ax.barh(
+        self.bar_plot = self.ax1.barh(
             np.arange(len(self.categories)), self.values, color=colors
         )
+        self.average_bar.set_height(average_volume)
 
-        plt.yticks(np.arange(len(self.categories)), self.categories)
+        self.ax1.set_yticks(np.arange(len(self.categories)))
+        self.ax1.set_yticklabels(self.categories)
+
         plt.draw()
-
-        # Exibir o gráfico
         plt.show()
 
 
