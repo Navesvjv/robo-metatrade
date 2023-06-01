@@ -5,63 +5,38 @@ import numpy as np
 class BarChart:
     def __init__(self, categories):
         self.categories = categories
-        self.values = [0] * len(categories)
-        self.colors = {1: "green", 2: "red"}
+        self.values = []
+        self.fig, self.ax = plt.subplots(2, 1, figsize=(8, 6))
+        self.bar_container = self.ax[0].bar(self.categories, self.values)
 
-        self.fig, self.ax = plt.subplots()
-
-        self.ax.spines["right"].set_visible(True)
-        self.ax.spines["top"].set_visible(False)
-        self.ax.yaxis.tick_left()
-        self.ax.xaxis.tick_bottom()
-        self.ax.spines["left"].set_linewidth(0.5)
-        self.ax.spines["bottom"].set_linewidth(0.5)
-
-        self.bar_plot = self.ax.barh(
-            np.arange(len(self.categories)), self.values, color="gray"
-        )
-        self.mean_line = None
-        self.mean_indicator = None
-
-        plt.xlabel("Volume")
-        plt.ylabel("Preço")
-        plt.title("Gráfico de Barras")
-
-    def update_values(self, data):
+    def update(self, data):
         self.values = [item["volume"] for item in data]
-        colors = [self.colors[item["type"]] for item in data]
+        average_volume = np.mean(self.values)
 
-        self.ax.clear()
-        self.bar_plot = self.ax.barh(
-            np.arange(len(self.categories)), self.values, color=colors
+        for bar, value in zip(self.bar_container, self.values):
+            bar.set_height(value)
+
+        self.ax[0].set_ylim(0, max(self.values) * 1.1)
+        self.ax[0].set_ylabel("Volume")
+
+        self.ax[1].bar(0, average_volume, color="red")
+        self.ax[1].set_xlim(-0.5, 0.5)
+        self.ax[1].set_ylim(0, max(self.values) * 1.1)
+        self.ax[1].set_xticks([])
+        self.ax[1].set_yticks([])
+        self.ax[1].spines["left"].set_visible(False)
+        self.ax[1].spines["right"].set_visible(False)
+        self.ax[1].spines["top"].set_visible(False)
+        self.ax[1].spines["bottom"].set_visible(False)
+        self.ax[1].annotate(
+            f"Average: {average_volume}",
+            xy=(0, average_volume),
+            xytext=(0, 5),
+            textcoords="offset points",
+            ha="center",
+            color="red",
         )
 
-        mean_volume = np.mean(self.values)
-        self.mean_line = self.ax.axhline(
-            mean_volume, color="blue", linestyle="-", linewidth=1
-        )
-        self.mean_indicator = self.ax.text(
-            1, mean_volume, "Mean", va="center", ha="left"
-        )
-
-        plt.yticks(np.arange(len(self.categories)), self.categories)
+        plt.tight_layout()
         plt.draw()
-
-        # Exibir o gráfico
-        plt.show()
-
-
-# Exemplo de uso
-data = [
-    {"type": 1, "price": 108890.0, "volume": 578},
-    {"type": 1, "price": 108880.0, "volume": 842},
-    {"type": 1, "price": 108870.0, "volume": 243},
-    {"type": 2, "price": 108860.0, "volume": 153},
-    {"type": 2, "price": 108850.0, "volume": 453},
-    {"type": 2, "price": 108840.0, "volume": 244},
-]
-
-categories = [item["price"] for item in data]
-chart = BarChart(categories)
-
-chart.update_values(data)
+        plt.pause(0.001)
