@@ -34,7 +34,7 @@ class BarChart:
         self.bar_plot = self.ax1.barh(
             np.arange(len(self.categories)), self.values, color=colors
         )
-        self.average_bar.set_height(average_volume)
+        self.average_bar[0].set_height(average_volume)
 
         self.ax1.set_yticks(np.arange(len(self.categories)))
         self.ax1.set_yticklabels(self.categories)
