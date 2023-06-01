@@ -6,11 +6,16 @@ class BarChart:
     def __init__(self, categories):
         self.categories = categories
         self.values = [0] * len(categories)
-        self.colors = {1: "blue", 2: "red"}
+        self.colors = {1: "green", 2: "red"}
+        self.trend_colors = {1: "lightgreen", 2: "lightcoral"}
 
         self.fig, self.ax = plt.subplots()
         self.bar_plot = self.ax.barh(
             np.arange(len(self.categories)), self.values, color="gray"
+        )
+
+        self.trend_bar = self.ax.barh(
+            0, 1, color="white", edgecolor="black", linewidth=1
         )
 
         plt.xlabel("Volume")
@@ -24,6 +29,15 @@ class BarChart:
         self.ax.clear()
         self.bar_plot = self.ax.barh(
             np.arange(len(self.categories)), self.values, color=colors
+        )
+
+        trend_type = max(
+            set([item["type"] for item in data]),
+            key=[item["type"] for item in data].count,
+        )
+        trend_color = self.trend_colors[trend_type]
+        self.trend_bar = self.ax.barh(
+            0, max(self.values), color=trend_color, edgecolor="black", linewidth=1
         )
 
         plt.yticks(np.arange(len(self.categories)), self.categories)
