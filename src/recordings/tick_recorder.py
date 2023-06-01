@@ -1,8 +1,8 @@
 import env
 import time
 import MetaTrader5 as mt5
-from config.singleton import Singleton
-from repositories.tick_repository import TickRepository
+from src.config.singleton import Singleton
+from src.repositories.tick_repository import TickRepository
 from src.trades.trade_time import TradeTime
 
 
@@ -16,6 +16,7 @@ class TickRecorder(Singleton):
             tick = mt5.symbol_info_tick(env.symbol)
 
             if tick is not None:
+                print(tick)
                 self.tickRepository.insert(tick, "ticks_win_1min")
             else:
                 raise Exception(f"Não foi possível obter a cotação do {env.symbol}")

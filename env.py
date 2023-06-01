@@ -3,9 +3,9 @@ symbol = "WINM23"
 volume = 1.0
 
 # CONTA
-account = "52989530"
-password = "e8KixLUF"
-server = "asd"
+account = 52989530
+password = "Naves223540@@"
+server = "XPMT5-DEMO"
 
 # TIME
 start_trading_time = "09:10"

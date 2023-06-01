@@ -1,6 +1,6 @@
 import env
 from datetime import datetime
-from config.singleton import Singleton
+from src.config.singleton import Singleton
 
 
 class TradeTime(Singleton):

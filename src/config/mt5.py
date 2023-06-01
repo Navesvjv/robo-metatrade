@@ -1,7 +1,7 @@
 import env as env
 import MetaTrader5 as mt5
-from singleton import Singleton
-from db import DatabaseConnection
+from .singleton import Singleton
+from .db import DatabaseConnection
 
 
 class Metatrader(Singleton):

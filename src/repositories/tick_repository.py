@@ -9,6 +9,6 @@ class TickRepository(Singleton):
 
     def insert(self, tick, tableName):
         query = f"INSERT INTO {tableName} (symbol, time, volume, bid, ask) VALUES (%s, %s, %s, %s, %s)"
-        values = (env.symbol, tick["time"], tick["volume"], tick["bid"], tick["ask"])
+        values = (env.symbol, tick[0], tick[4], tick[1], tick[2])
         self.db.exec(query, values)
-        print(f"Tick {env.symbol}: {tick['time']} inserted successfully ✅")
+        print(f"Tick {env.symbol}: {tick[0]} inserted successfully ✅")
