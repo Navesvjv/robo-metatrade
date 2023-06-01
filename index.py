@@ -50,7 +50,6 @@
 
 
 import matplotlib.pyplot as plt
-import numpy as np
 
 
 class BarChart:
@@ -58,33 +57,22 @@ class BarChart:
         self.data = data
         self.categories = [item["price"] for item in data]
         self.values = [item["volume"] for item in data]
-        self.colors = {1: "blue", 2: "red"}
 
         self.fig, self.ax = plt.subplots(figsize=(8, 6))
         self.bar_plot = self.ax.bar(
-            np.arange(len(self.categories)), self.values, color="gray"
-        )
-        self.sum_bar = self.ax.bar(
-            0, sum(self.values), color="green", label="Soma dos Volumes"
-        )
-        self.avg_bar = self.ax.bar(
-            0, np.mean(self.values), color="orange", label="Média dos Volumes"
+            0, sum(self.values), color="gray", label="Soma dos Volumes"
         )
 
         self.ax.set_xlabel("Preço")
         self.ax.set_ylabel("Volume")
         self.ax.set_title("Gráfico de Barras")
-        self.ax.set_xticks(np.arange(len(self.categories)))
-        self.ax.set_xticklabels(self.categories)
+        self.ax.set_xticks([0])
+        self.ax.set_xticklabels(["Soma dos Volumes"])
         self.ax.legend()
 
     def update_chart(self):
         self.values = [item["volume"] for item in self.data]
-        self.bar_plot = self.ax.bar(
-            np.arange(len(self.categories)), self.values, color="gray"
-        )
-        self.sum_bar[0].set_height(sum(self.values))
-        self.avg_bar[0].set_height(np.mean(self.values))
+        self.bar_plot[0].set_height(sum(self.values))
 
         plt.draw()
         plt.show()
