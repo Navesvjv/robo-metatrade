@@ -9,13 +9,13 @@ class BarChart:
         self.colors = {1: "green", 2: "red"}
 
         self.fig, self.ax = plt.subplots()
-        self.bar_plot = self.ax.barh(
+        self.bar_plot = self.ax.bar(
             np.arange(len(self.categories)), self.values, color="gray"
         )
-        self.mean_bar = self.ax.barh(0, 0, color="blue", alpha=0.5)
+        self.mean_bar = self.ax.bar(0, 0, color="blue", alpha=0.5)
 
-        plt.xlabel("Volume")
-        plt.ylabel("Preço")
+        plt.xlabel("Preço")
+        plt.ylabel("Volume")
         plt.title("Gráfico de Barras")
 
     def update_values(self, data):
@@ -23,14 +23,14 @@ class BarChart:
         colors = [self.colors[item["type"]] for item in data]
 
         self.ax.clear()
-        self.bar_plot = self.ax.barh(
+        self.bar_plot = self.ax.bar(
             np.arange(len(self.categories)), self.values, color=colors
         )
 
         mean_volume = np.mean(self.values)
-        self.mean_bar = self.ax.barh(0, mean_volume, color="blue", alpha=0.5)
+        self.mean_bar = self.ax.bar(0, mean_volume, color="blue", alpha=0.5)
 
-        plt.yticks(np.arange(len(self.categories)), self.categories)
+        plt.xticks(np.arange(len(self.categories)), self.categories)
         plt.draw()
 
         # Exibir o gráfico
