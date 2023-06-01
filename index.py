@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class BarChart:
@@ -9,7 +10,7 @@ class BarChart:
 
         self.fig, self.ax = plt.subplots()
         self.bar_plot = self.ax.barh(
-            range(len(self.categories)), self.values, color="gray"
+            np.arange(len(self.categories)), self.values, color="gray"
         )
 
         plt.xlabel("Volume")
@@ -20,11 +21,12 @@ class BarChart:
         self.values = [item["volume"] for item in data]
         colors = [self.colors[item["type"]] for item in data]
 
-        for bar, value, color in zip(self.bar_plot, self.values, colors):
-            bar.set_width(value)
-            bar.set_color(color)
+        self.ax.clear()
+        self.bar_plot = self.ax.barh(
+            np.arange(len(self.categories)), self.values, color=colors
+        )
 
-        plt.yticks(range(len(self.categories)), self.categories)
+        plt.yticks(np.arange(len(self.categories)), self.categories)
         plt.draw()
 
         # Exibir o gráfico
