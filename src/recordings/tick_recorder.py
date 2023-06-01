@@ -12,16 +12,18 @@ class TickRecorder(Singleton):
         self.tradeTime = TradeTime()
 
     def record1min(self):
-        while self.tradeTime.isTradingTime:
-            tick = mt5.symbol_info_tick(env.symbol)
+        a = {"type": 1, "price": 108890.0, "volume": 578, "volume_dbl": 578.0}
+        self.tickRepository.insert(a, "ticks_win_1min")
+        # while self.tradeTime.isTradingTime:
+        #     tick = mt5.symbol_info_tick(env.symbol)
 
-            if tick is not None:
-                print(tick)
-                self.tickRepository.insert(tick, "ticks_win_1min")
-            else:
-                raise Exception(f"Não foi possível obter a cotação do {env.symbol}")
+        #     if tick is not None:
+        #         print(tick)
+        #         self.tickRepository.insert(tick, "ticks_win_1min")
+        #     else:
+        #         raise Exception(f"Não foi possível obter a cotação do {env.symbol}")
 
-            time.sleep(60)
+        #     time.sleep(60)
 
     def record5min(self):
         while self.tradeTime.isTradingTime:
