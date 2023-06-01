@@ -10,7 +10,7 @@ class BarChart:
 
         self.fig, self.ax = plt.subplots()
 
-        self.ax.spines["right"].set_visible(False)
+        self.ax.spines["right"].set_visible(True)
         self.ax.spines["top"].set_visible(False)
         self.ax.yaxis.tick_left()
         self.ax.xaxis.tick_bottom()
@@ -21,6 +21,7 @@ class BarChart:
             np.arange(len(self.categories)), self.values, color="gray"
         )
         self.mean_line = self.ax.axvline(0, color="blue", linestyle="--", linewidth=1)
+        self.mean_indicator = self.ax.text(0, 0, "Mean", va="center", ha="left")
 
         plt.xlabel("Volume")
         plt.ylabel("Preço")
@@ -38,6 +39,9 @@ class BarChart:
         mean_volume = np.mean(self.values)
         self.mean_line = self.ax.axvline(
             mean_volume, color="blue", linestyle="--", linewidth=1
+        )
+        self.mean_indicator = self.ax.text(
+            mean_volume, len(self.categories) - 0.5, "Mean", va="center", ha="right"
         )
 
         plt.yticks(np.arange(len(self.categories)), self.categories)
