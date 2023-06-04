@@ -7,10 +7,16 @@ from src.config.orders import Orders
 
 class Checks(Singleton):
     def __init__(self):
-        self.orders = Orders()
+        if self._wasInstantiated is None:
+            self.orders = Orders()
+
+        self._wasInstantiated = True
 
     def canTrade(self):
-        if self.isTimeCloseOrders:
+        if self.is_weekend():
+            return "stop"
+
+        elif self.isTimeCloseOrders:
             if self.existsOpenOrder():
                 self.orders.closeAllOrders()
 
@@ -49,9 +55,17 @@ class Checks(Singleton):
 
     def existsOpenOrder(self):
         orders = mt5.orders_get()
+
         if orders:
             print("Existe ordem em aberto!")
             return True
         else:
             print("Não existe ordem em aberto!")
             return False
+
+    def is_weekend(self):
+        today = datetime.date.today()
+        isWeekend = today.weekday() >= 5
+        if isWeekend:
+            print("É fim de semana! ❌")
+        return isWeekend

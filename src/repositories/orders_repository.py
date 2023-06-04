@@ -6,7 +6,10 @@ from src.config.db import DatabaseConnection
 
 class OrdersRepository(Singleton):
     def __init__(self):
-        self.db = DatabaseConnection()
+        if self._wasInstantiated is None:
+            self.db = DatabaseConnection()
+
+        self._wasInstantiated = True
 
     def insert(self, order, percSell, percBuy):
         order = json.loads(order)

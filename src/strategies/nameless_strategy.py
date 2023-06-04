@@ -1,18 +1,21 @@
 import env
 import json
 import time
-import random
 import MetaTrader5 as mt5
 from src.config.check import Checks
 from src.config.orders import Orders
 from src.repositories.orders_repository import OrdersRepository
+from src.config.singleton import Singleton
 
 
-class NamelessStrategy:
+class NamelessStrategy(Singleton):
     def __init__(self):
-        self.check = Checks()
-        self.orders = Orders()
-        self.ordersRepository = OrdersRepository()
+        if self._wasInstantiated is None:
+            self.check = Checks()
+            self.orders = Orders()
+            self.ordersRepository = OrdersRepository()
+
+        self._wasInstantiated = True
 
     def execute(self):
         while True:

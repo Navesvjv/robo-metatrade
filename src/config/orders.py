@@ -5,7 +5,10 @@ from src.config.singleton import Singleton
 
 class Orders(Singleton):
     def __init__(self):
-        pass
+        if self._wasInstantiated is None:
+            pass
+
+        self._wasInstantiated = True
 
     def openMarketBuy(self, magic):
         price = mt5.symbol_info_tick(env.symbol).ask

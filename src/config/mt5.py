@@ -6,7 +6,10 @@ from .db import DatabaseConnection
 
 class Metatrader(Singleton):
     def __init__(self):
-        self.initialize()
+        if self._wasInstantiated is None:
+            self.initialize()
+
+        self._wasInstantiated = True
 
     def initialize(self):
         try:
