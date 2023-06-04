@@ -2,7 +2,7 @@ import json
 import time
 import MetaTrader5 as mt5
 from src.config.check import Checks
-from src.config.orders.orders import Orders
+from src.config.orders.orders_win import OrdersWIN
 from src.repositories.trades_win_repository import TradesWINRepository
 from src.config.symbols import Symbols
 
@@ -10,10 +10,10 @@ from src.config.symbols import Symbols
 class NamelessStrategyWIN:
     def __init__(self):
         self.check = Checks()
-        self.orders = Orders()
-        self.tradesWinRepository = TradesWINRepository()
         self.symbols = Symbols()
         self.symbol = "WIN" + self.symbols.getReferenceLetterAndYear()
+        self.ordersWin = OrdersWIN(self.symbol)
+        self.tradesWinRepository = TradesWINRepository()
 
     def execute(self):
         while True:
@@ -41,9 +41,9 @@ class NamelessStrategyWIN:
 
                 order = None
                 if percSell > 65:
-                    order = self.orders.openMarketSell(magic)
+                    order = self.ordersWin.openMarketSell(magic)
                 elif percBuy > 65:
-                    order = self.orders.openMarketBuy(magic)
+                    order = self.ordersWin.openMarketBuy(magic)
 
                 self.tradesWinRepository.insert(order, percSell, percBuy)
 

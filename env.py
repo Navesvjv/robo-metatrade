@@ -1,3 +1,5 @@
+execSymbols = ["WIN", "WDO"]
+
 # WIN
 volume_win = 1.0
 
@@ -13,7 +15,7 @@ server = "XPMT5-DEMO"
 # TIME
 start_trading_time = "09:10"
 stop_trading_time = "16:00"
-close_orders_time = "16:50"
+close_orders_time = "16:30"
 
 # BANCO
 db_host = "localhost"

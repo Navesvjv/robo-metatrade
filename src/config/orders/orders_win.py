@@ -4,15 +4,15 @@ from src.config.singleton import Singleton
 
 
 class OrdersWIN(Singleton):
-    def __init__(self):
+    def __init__(self, symbol):
         if self._wasInstantiated is None:
-            pass
+            self.symbol = symbol
 
         self._wasInstantiated = True
 
     def openMarketBuy(self, magic, symbol):
-        price = mt5.symbol_info_tick(env.symbol).ask
-        point = mt5.symbol_info(env.symbol).point
+        price = mt5.symbol_info_tick(self.symbol).ask
+        point = mt5.symbol_info(self.symbol).point
         tp = price + 50 * point
         sl = price - 100 * point
 
@@ -33,8 +33,8 @@ class OrdersWIN(Singleton):
             print("Order MarketBuy opened successfully! ✅")
 
     def openMarketSell(self, magic, symbol):
-        price = mt5.symbol_info_tick(env.symbol).bid
-        point = mt5.symbol_info(env.symbol).point
+        price = mt5.symbol_info_tick(self.symbol).bid
+        point = mt5.symbol_info(self.symbol).point
         tp = price - 50 * point
         sl = price + 100 * point
 
@@ -53,14 +53,3 @@ class OrdersWIN(Singleton):
             print(f"Error opening order: {result.comment} ❌")
         else:
             print("Order MarketSell opened successfully! ✅")
-
-    def closeAllOrders(self):
-        positions = mt5.positions_get()
-
-        for position in positions:
-            result = mt5.position_close(position)
-
-            if result.retcode == mt5.TRADE_RETCODE_DONE:
-                print(f"Posição {position.ticket} fechada com sucesso.")
-            else:
-                print(f"Erro ao fechar a posição {position.ticket}: {result.comment}")

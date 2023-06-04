@@ -1,57 +1,45 @@
 import env
 import holidays
 import MetaTrader5 as mt5
+from .mt5 import Metatrader
 from datetime import datetime
 from src.config.singleton import Singleton
-from config.orders.orders import Orders
+from src.config.orders.orders_win import OrdersWIN
 
 
 class Checks(Singleton):
     def __init__(self):
         if self._wasInstantiated is None:
-            self.orders = Orders()
+            self.metatrader = Metatrader()
+            self.ordersWin = OrdersWIN()
 
         self._wasInstantiated = True
 
     def canTrade(self, symbol):
         if self.isTimeCloseOrders:
-            if self.existsOpenPosition(symbol):
-                self.orders.closeAllOrders()
+            if self.existsAnyOpenPosition():
+                self.metatrader.closeAllPositions()
 
             return "stop"
 
         elif self.isTimeTrading():
-            if self.existsOpenPosition(symbol):
+            if self.existsOpenPositionBySymbol(symbol):
                 return "await"
             return "continue"
         else:
             return "stop"
 
-    def isTimeTrading(self) -> bool:
-        current_time = datetime.now().time()
-        start_time = datetime.strptime(env.start_trading_time, "%H:%M").time()
-        end_time = datetime.strptime(env.stop_trading_time, "%H:%M").time()
+    def existsAnyOpenPosition(self):
+        positions = mt5.positions_get()
 
-        if start_time <= current_time <= end_time:
-            print("Hora de operar!")
+        if positions:
+            print(f"Existe posição em aberto!")
             return True
         else:
-            print("Não é hora de operar! ❌")
+            print(f"Não existe posição em aberto!")
             return False
 
-    def isTimeCloseOrders(self) -> bool:
-        current_time = datetime.now().time()
-        start_time = datetime.strptime(env.stop_trading_time, "%H:%M").time()
-        end_time = datetime.strptime(env.close_orders_time, "%H:%M").time()
-
-        if start_time <= current_time <= end_time:
-            print("Hora de fechar orderns! ⚠️")
-            return True
-        else:
-            print("Não é hora de fechar ordens!")
-            return False
-
-    def existsOpenPosition(self, symbol):
+    def existsOpenPositionBySymbol(self, symbol):
         positions = mt5.positions_get()
         openPositions = [p for p in positions if p.symbol == symbol]
 
@@ -60,6 +48,29 @@ class Checks(Singleton):
             return True
         else:
             print(f"Não existe posição em aberto para o {symbol}!")
+            return False
+
+    def isTimeTrading(self) -> bool:
+        currentTime = datetime.now().time()
+        startTime = datetime.strptime(env.start_trading_time, "%H:%M").time()
+        endTime = datetime.strptime(env.stop_trading_time, "%H:%M").time()
+
+        if startTime <= currentTime <= endTime:
+            print("Hora de operar!")
+            return True
+        else:
+            print("Não é hora de operar! ❌")
+            return False
+
+    def isTimeCloseOrders(self) -> bool:
+        currentTime = datetime.now().time()
+        closeTime = datetime.strptime(env.close_orders_time, "%H:%M").time()
+
+        if currentTime >= closeTime:
+            print("Hora de fechar orderns! ⚠️")
+            return True
+        else:
+            print("Não é hora de fechar ordens!")
             return False
 
     def isWeekend(self):
