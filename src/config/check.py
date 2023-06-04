@@ -64,7 +64,7 @@ class Checks(Singleton):
             return False
 
     def is_weekend(self):
-        today = datetime.date.today()
+        today = datetime.today()
         isWeekend = today.weekday() >= 5
         if isWeekend:
             print("É fim de semana! ❌")
