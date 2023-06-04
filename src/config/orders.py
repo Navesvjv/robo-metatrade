@@ -1,6 +1,6 @@
 import env as env
 import MetaTrader5 as mt5
-from config.singleton import Singleton
+from src.config.singleton import Singleton
 
 
 class Orders(Singleton):

@@ -10,9 +10,8 @@ class DatabaseConnection(Singleton):
         self.password = env.db_pass
         self.database = env.db_name
         self.connection = None
-        self._connected = False
 
-        if not self._connected:
+        if not self.connection:
             self.connect()
 
     def exec(self, query, values):
@@ -30,7 +29,6 @@ class DatabaseConnection(Singleton):
         )
 
         if self.connection.is_connected():
-            self._connected = True
             print(f"Connected database! ✅")
         else:
             raise Exception("Database connection not established! ❌")
