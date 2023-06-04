@@ -10,7 +10,9 @@ class Metatrader(Singleton):
         if self._wasInstantiated is None:
             self.checks = Checks()
 
-            if not self.checks.is_weekend:
+            if self.checks.is_weekend:
+                quit()
+            else:
                 self.initialize()
 
         self._wasInstantiated = True
