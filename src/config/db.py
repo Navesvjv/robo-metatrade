@@ -5,13 +5,12 @@ from src.config.singleton import Singleton
 
 class DatabaseConnection(Singleton):
     def __init__(self):
-        self.host = env.db_host
-        self.user = env.db_user
-        self.password = env.db_pass
-        self.database = env.db_name
-        self.connection = None
-
         if self._wasInstantiated is None:
+            self.host = env.db_host
+            self.user = env.db_user
+            self.password = env.db_pass
+            self.database = env.db_name
+            self.connection = None
             self.connect()
 
         self._wasInstantiated = True
@@ -34,7 +33,6 @@ class DatabaseConnection(Singleton):
             print(f"Connected database! ✅")
         else:
             raise Exception("Database connection not established! ❌")
-        
 
     def disconnect(self):
         if self._wasInstantiated:
