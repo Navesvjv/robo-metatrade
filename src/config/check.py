@@ -9,18 +9,21 @@ class Checks(Singleton):
     def __init__(self):
         self.orders = Orders()
 
-    def canOperate(self):
-        if self.isCloseOrdersTime:
+    def canTrade(self):
+        if self.isTimeCloseOrders:
             if self.existsOpenOrder():
                 self.orders.closeAllOrders()
-            return False
 
-        elif self.isTradingTime():
-            return True
+            return "stop"
+
+        elif self.isTimeTrading():
+            if self.existsOpenOrder():
+                return "await"
+            return "continue"
         else:
-            return False
+            return "stop"
 
-    def isTradingTime(self) -> bool:
+    def isTimeTrading(self) -> bool:
         current_time = datetime.now().time()
         start_time = datetime.strptime(env.start_trading_time, "%H:%M").time()
         end_time = datetime.strptime(env.stop_trading_time, "%H:%M").time()
@@ -32,7 +35,7 @@ class Checks(Singleton):
             print("Não é hora de operar! ❌")
             return False
 
-    def isCloseOrdersTime(self) -> bool:
+    def isTimeCloseOrders(self) -> bool:
         current_time = datetime.now().time()
         start_time = datetime.strptime(env.stop_trading_time, "%H:%M").time()
         end_time = datetime.strptime(env.close_orders_time, "%H:%M").time()

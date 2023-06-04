@@ -7,7 +7,7 @@ class Orders(Singleton):
     def __init__(self):
         pass
 
-    def openMarketBuy(self):
+    def openMarketBuy(self, magic):
         price = mt5.symbol_info_tick(env.symbol).ask
         point = mt5.symbol_info(env.symbol).point
         tp = price + 50 * point
@@ -21,6 +21,7 @@ class Orders(Singleton):
             price=0,
             tp=tp,
             sl=sl,
+            magic=magic,
         )
 
         if result.retcode != mt5.TRADE_RETCODE_DONE:
@@ -28,7 +29,7 @@ class Orders(Singleton):
         else:
             print("Order MarketBuy opened successfully! ✅")
 
-    def openMarketSell(self):
+    def openMarketSell(self, magic):
         price = mt5.symbol_info_tick(env.symbol).bid
         point = mt5.symbol_info(env.symbol).point
         tp = price - 50 * point
@@ -42,6 +43,7 @@ class Orders(Singleton):
             price=0,
             tp=tp,
             sl=sl,
+            magic=magic,
         )
 
         if result.retcode != mt5.TRADE_RETCODE_DONE:
