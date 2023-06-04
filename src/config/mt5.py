@@ -19,8 +19,6 @@ class Metatrader(Singleton):
 
     def initialize(self):
         try:
-            DatabaseConnection()
-
             if not mt5.initialize(
                 login=env.account, server=env.server, password=env.password
             ):
@@ -29,6 +27,8 @@ class Metatrader(Singleton):
                 )
             else:
                 print(f"MetaTrader inicializado! ✅")
+
+            DatabaseConnection()
         except Exception as exc:
             print(exc)
             quit()
