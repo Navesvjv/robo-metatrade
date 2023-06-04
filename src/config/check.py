@@ -1,6 +1,7 @@
 import env
-from datetime import datetime
+import holidays
 import MetaTrader5 as mt5
+from datetime import datetime
 from src.config.singleton import Singleton
 from src.config.orders import Orders
 
@@ -60,10 +61,21 @@ class Checks(Singleton):
             print("Não existe ordem em aberto!")
             return False
 
-    def is_weekend(self):
+    def isWeekend(self):
         today = datetime.today()
         isWeekend = today.weekday() >= 5
         if isWeekend:
             print("É fim de semana! ❌")
             quit()
         return isWeekend
+    
+    def isHoliday(self):
+        today = datetime.today()
+        brHolidays = holidays.BR()
+
+        if today in brHolidays:
+            print("Hoje é feriado! ❌")
+            quit()
+        else:
+            return False
+
