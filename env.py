@@ -1,6 +1,9 @@
-# ORDER
-symbol = "WINM23"
-volume = 1.0
+# WIN
+volume_win = 1.0
+
+# WDO
+volume_wdo = 1.0
+
 
 # CONTA
 account = 52989530

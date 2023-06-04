@@ -1,25 +1,23 @@
-import env
 import json
 import time
 import MetaTrader5 as mt5
 from src.config.check import Checks
-from src.config.orders import Orders
-from src.repositories.orders_repository import OrdersRepository
-from src.config.singleton import Singleton
+from src.config.orders.orders import Orders
+from src.repositories.trades_win_repository import TradesWINRepository
+from src.config.symbols import Symbols
 
 
-class NamelessStrategy(Singleton):
+class NamelessStrategyWIN:
     def __init__(self):
-        if self._wasInstantiated is None:
-            self.check = Checks()
-            self.orders = Orders()
-            self.ordersRepository = OrdersRepository()
-
-        self._wasInstantiated = True
+        self.check = Checks()
+        self.orders = Orders()
+        self.tradesWinRepository = TradesWINRepository()
+        self.symbols = Symbols()
+        self.symbol = "WIN" + self.symbols.getReferenceLetterAndYear()
 
     def execute(self):
         while True:
-            can = self.check.canTrade()
+            can = self.check.canTrade(self.symbol)
             if can == "stop":
                 break
             elif can == "continue":
@@ -28,8 +26,8 @@ class NamelessStrategy(Singleton):
             time.sleep(10)
 
     def getMarketBook(self):
-        if mt5.market_book_add(env.symbol):
-            items = mt5.market_book_get(env.symbol)
+        if mt5.market_book_add(self.symbol):
+            items = mt5.market_book_get(self.symbol)
             if items:
                 items = json.loads(items)
                 items_sell, items_buy = self.getItemsByType(items)
@@ -38,7 +36,7 @@ class NamelessStrategy(Singleton):
                 sumBuy = self.sumVolume(items_buy)
 
                 percBuy, percSell = self.getPercentages(sumBuy, sumSell)
-                lastId = self.ordersRepository.getLastIdOrder()
+                lastId = self.tradesWinRepository.getLastId()
                 magic = lastId + 1 if lastId else 1000000
 
                 order = None
@@ -47,7 +45,7 @@ class NamelessStrategy(Singleton):
                 elif percBuy > 65:
                     order = self.orders.openMarketBuy(magic)
 
-                self.ordersRepository.insert(order, percSell, percBuy)
+                self.tradesWinRepository.insert(order, percSell, percBuy)
 
     def getPercentages(self, sumBuy, sumSell):
         total = sumBuy + sumSell

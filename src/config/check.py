@@ -3,7 +3,7 @@ import holidays
 import MetaTrader5 as mt5
 from datetime import datetime
 from src.config.singleton import Singleton
-from src.config.orders import Orders
+from config.orders.orders import Orders
 
 
 class Checks(Singleton):
@@ -13,15 +13,15 @@ class Checks(Singleton):
 
         self._wasInstantiated = True
 
-    def canTrade(self):
+    def canTrade(self, symbol):
         if self.isTimeCloseOrders:
-            if self.existsOpenOrder():
+            if self.existsOpenPosition(symbol):
                 self.orders.closeAllOrders()
 
             return "stop"
 
         elif self.isTimeTrading():
-            if self.existsOpenOrder():
+            if self.existsOpenPosition(symbol):
                 return "await"
             return "continue"
         else:
@@ -51,14 +51,15 @@ class Checks(Singleton):
             print("Não é hora de fechar ordens!")
             return False
 
-    def existsOpenOrder(self):
-        orders = mt5.orders_get()
+    def existsOpenPosition(self, symbol):
+        positions = mt5.positions_get()
+        openPositions = [p for p in positions if p.symbol == symbol]
 
-        if orders:
-            print("Existe ordem em aberto!")
+        if openPositions:
+            print(f"Existe posição em aberto para o {symbol}!")
             return True
         else:
-            print("Não existe ordem em aberto!")
+            print(f"Não existe posição em aberto para o {symbol}!")
             return False
 
     def isWeekend(self):
@@ -68,7 +69,7 @@ class Checks(Singleton):
             print("É fim de semana! ❌")
             quit()
         return isWeekend
-    
+
     def isHoliday(self):
         today = datetime.today()
         brHolidays = holidays.BR()
@@ -78,4 +79,3 @@ class Checks(Singleton):
             quit()
         else:
             return False
-

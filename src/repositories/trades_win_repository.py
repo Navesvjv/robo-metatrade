@@ -4,7 +4,7 @@ from src.config.singleton import Singleton
 from src.config.db import DatabaseConnection
 
 
-class OrdersRepository(Singleton):
+class TradesWINRepository(Singleton):
     def __init__(self):
         if self._wasInstantiated is None:
             self.db = DatabaseConnection()
@@ -15,7 +15,7 @@ class OrdersRepository(Singleton):
         order = json.loads(order)
 
         query = f"""
-            INSERT INTO orders 
+            INSERT INTO trades_win 
             (magic, symbol, price, volume, type, retcode, perc_sell, perc_buy) 
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
         """
@@ -37,7 +37,7 @@ class OrdersRepository(Singleton):
         except Exception as exc:
             print(f"Error(Insert Order): {exc}")
 
-    def getLastIdOrder(self):
+    def getLastId(self):
         query = f"""
             SELECT MAX(id) FROM orders; 
         """
