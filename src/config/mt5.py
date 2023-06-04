@@ -9,11 +9,8 @@ class Metatrader(Singleton):
     def __init__(self):
         if self._wasInstantiated is None:
             self.checks = Checks()
-
-            if self.checks.is_weekend:
-                quit()
-            else:
-                self.initialize()
+            # if not self.checks.is_weekend():
+            self.initialize()
 
         self._wasInstantiated = True
 
@@ -27,6 +24,8 @@ class Metatrader(Singleton):
                 raise Exception(
                     f"Falha ao inicializar o metatrader 5 ❌\n Error: {mt5.last_error()}"
                 )
+            else:
+                print(f"MetaTrader inicializado! ✅")
         except Exception as exc:
             print(exc)
             quit()

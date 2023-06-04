@@ -65,4 +65,5 @@ class Checks(Singleton):
         isWeekend = today.weekday() >= 5
         if isWeekend:
             print("É fim de semana! ❌")
+            quit()
         return isWeekend
