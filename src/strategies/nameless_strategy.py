@@ -1,35 +1,54 @@
 import env
 import json
+import time
+import random
 import MetaTrader5 as mt5
 from src.config.check import Checks
 from src.config.orders import Orders
+from src.repositories.orders_repository import OrdersRepository
 
 
 class NamelessStrategy:
     def __init__(self):
         self.check = Checks()
         self.orders = Orders()
+        self.ordersRepository = OrdersRepository()
 
-    def handler(self):
-        if self.check.canOperate():
-            if mt5.market_book_add(env.symbol):
-                items = mt5.market_book_get(env.symbol)
-                if items:
-                    items = json.loads(items)
-                    items_sell, items_buy = self.getItemsByType(items)
+    def execute(self):
+        while True:
+            can = self.check.canTrade()
+            if can == "stop":
+                break
+            elif can == "continue":
+                self.getMarketBook()
 
-                    sumSell = self.sumVolume(items_sell)
-                    sumBuy = self.sumVolume(items_buy)
+            time.sleep(10)
 
-                    percBuy, percSell = self.getPercentages(sumBuy, sumSell)
-                    if percBuy > 70:
-                        self.orders.openMarketBuy()
-                    elif percSell > 70:
-                        self.orders.openMarketSell()
+    def getMarketBook(self):
+        if mt5.market_book_add(env.symbol):
+            items = mt5.market_book_get(env.symbol)
+            if items:
+                items = json.loads(items)
+                items_sell, items_buy = self.getItemsByType(items)
+
+                sumSell = self.sumVolume(items_sell)
+                sumBuy = self.sumVolume(items_buy)
+
+                percBuy, percSell = self.getPercentages(sumBuy, sumSell)
+                lastId = self.ordersRepository.getLastIdOrder()
+                magic = lastId + 1 if lastId else 1000000
+
+                order = None
+                if percSell > 65:
+                    order = self.orders.openMarketSell(magic)
+                elif percBuy > 65:
+                    order = self.orders.openMarketBuy(magic)
+
+                self.ordersRepository.insert(order, percSell, percBuy)
 
     def getPercentages(self, sumBuy, sumSell):
         total = sumBuy + sumSell
-        return (sumBuy / total), (sumSell / total)
+        return (sumBuy / total * 100), (sumSell / total * 100)
 
     def getItemsByType(self, items):
         items_sell = []
