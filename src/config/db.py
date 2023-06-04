@@ -1,25 +1,20 @@
 import env
 import mysql.connector
+from src.config.singleton import Singleton
 
 
-class DatabaseConnection:
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super().__new__(cls, *args, **kwargs)
-        return cls._instance
-
+class DatabaseConnection(Singleton):
     def __init__(self):
         self.host = env.db_host
         self.user = env.db_user
         self.password = env.db_pass
         self.database = env.db_name
         self.connection = None
-        self.connected = None
 
-        if self.connected == None:
+        if self._wasInstantiated is None:
             self.connect()
+
+        self._wasInstantiated = True
 
     def exec(self, query, values):
         cursor = self.connection.cursor()
@@ -36,13 +31,12 @@ class DatabaseConnection:
         )
 
         if self.connection.is_connected():
-            self.connected = True
             print(f"Connected database! ✅")
         else:
             raise Exception("Database connection not established! ❌")
         
 
     def disconnect(self):
-        if self.connected:
+        if self._wasInstantiated:
             self.connection.close()
             print("Closed database! ✅")

@@ -1,5 +1,6 @@
 class Singleton:
     _instance = None
+    _wasInstantiated = None
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
