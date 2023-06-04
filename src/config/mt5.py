@@ -2,12 +2,16 @@ import env as env
 import MetaTrader5 as mt5
 from .singleton import Singleton
 from .db import DatabaseConnection
+from .check import Checks
 
 
 class Metatrader(Singleton):
     def __init__(self):
         if self._wasInstantiated is None:
-            self.initialize()
+            self.checks = Checks()
+
+            if not self.checks.is_weekend:
+                self.initialize()
 
         self._wasInstantiated = True
 

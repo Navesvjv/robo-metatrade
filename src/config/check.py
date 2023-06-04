@@ -13,10 +13,7 @@ class Checks(Singleton):
         self._wasInstantiated = True
 
     def canTrade(self):
-        if self.is_weekend():
-            return "stop"
-
-        elif self.isTimeCloseOrders:
+        if self.isTimeCloseOrders:
             if self.existsOpenOrder():
                 self.orders.closeAllOrders()
 
