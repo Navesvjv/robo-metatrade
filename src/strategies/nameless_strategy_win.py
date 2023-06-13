@@ -4,14 +4,13 @@ import MetaTrader5 as mt5
 from src.config.check import Checks
 from src.config.orders.orders_win import OrdersWIN
 from src.repositories.trades_win_repository import TradesWINRepository
-from src.config.symbols import Symbols
+from src.config.symbols import SymbolEnum, getSymbol
 
 
 class NamelessStrategyWIN:
     def __init__(self):
         self.check = Checks()
-        self.symbols = Symbols()
-        self.symbol = "WIN" + self.symbols.getReferenceLetterAndYear()
+        self.symbol = getSymbol(SymbolEnum.WIN)
         self.ordersWin = OrdersWIN(self.symbol)
         self.tradesWinRepository = TradesWINRepository()
 
