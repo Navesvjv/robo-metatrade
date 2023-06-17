@@ -1,10 +1,15 @@
-import env
+import pandas as pd
 import mysql.connector
+from src.config import getConfig
+from src.utils import convertDate
 from src.singleton import Singleton
+
+env = getConfig()
 
 
 class DbConnection(Singleton):
     conn = None
+    fullBase = None
 
     def __init__(self):
         if self._wasInstantiated is None:
@@ -24,14 +29,20 @@ class DbConnection(Singleton):
         self.conn.commit()
         cursor.close()
 
-    def fetchAllWinH1(self, columns, limit=None):
-        cursor = self.conn.cursor()
-        limit = f" limit {limit} " if limit else ""
-        cursor.execute(f"select {', '.join(columns)} from win_h1 {limit}")
-        data = cursor.fetchall()
-        cursor.close()
+    def fetchAllWinH1(self):
+        if self.fullBase is None:
+            cursor = self.conn.cursor()
+            limit = f" limit {env.selectLimit} " if env.selectLimit else ""
+            cursor.execute(f"select {', '.join(env.columns)} from win_h1 {limit}")
+            data = cursor.fetchall()
+            cursor.close()
 
-        return data
+            self.fullBase = pd.DataFrame(data, columns=env.columns)
+            self.fullBase = self.fullBase.dropna()
+            if "time" in self.fullBase.columns:
+                self.fullBase["time"] = convertDate(self.fullBase)
+
+        return self.fullBase
 
     def insertWinH1(self, data):
         query = """
@@ -45,10 +56,10 @@ class DbConnection(Singleton):
 
     def openDbConnection(self):
         self.conn = mysql.connector.connect(
-            host=env.db_host,
-            user=env.db_user,
-            password=env.db_pass,
-            database=env.db_name,
+            host=env.dbHost,
+            user=env.dbUser,
+            password=env.dbPass,
+            database=env.dbName,
         )
 
         if self.conn.is_connected():

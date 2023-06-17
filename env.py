@@ -1,23 +1,26 @@
-execSymbols = ["WIN", "WDO"]
+selectLimit = None  # None or number (int)
+numberTest = 5
+timeSteps = 20
+withDropout = True
+lstmRepetition = 0
+columnsTraining = ["open", "close"]
+columnsExpected = ["close"]
+denseActivation = "sigmoid"  # 'sigmoid' / 'linear'
+compilerOptmizer = "adam"  # 'adam' / 'rmsprop'
+regressorEpocs = 5
+regressorBatchSize = 10
 
-# WIN
-volume_win = 1.0
-
-# WDO
-volume_wdo = 1.0
-
-
-# CONTA
+# ACCOUNT
 account = 52989530
 password = "Naves223540@@"
 server = "XPMT5-DEMO"
 
-# TIME
+# TRADE TIME
 start_trading_time = "09:10"
 stop_trading_time = "16:00"
 close_orders_time = "16:30"
 
-# BANCO
+# DATABASE
 db_host = "localhost"
 db_user = "root"
 db_name = "metatrader"
