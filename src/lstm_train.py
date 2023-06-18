@@ -4,7 +4,7 @@ from keras.layers import Dense, Dropout, LSTM
 from sklearn.preprocessing import MinMaxScaler
 from keras.callbacks import ModelCheckpoint
 from src.config import getConfig
-from src.utils import getIndexColumns, saveNormalizer
+from src.utils import getIndexColumns, saveNormalizer, removeColumnTime
 
 env = getConfig()
 
@@ -13,27 +13,25 @@ class LstmTraining:
     predictors = []
     realPrices = []
     regressor = Sequential()
-    normalizer = MinMaxScaler(feature_range=(0, 1))
+    trainNormalizer = MinMaxScaler(feature_range=(0, 1))
 
     def __init__(self, fullBase):
         self.fullBase = fullBase
-        self.extractData()
+        self.extract()
         self.training()
-        saveNormalizer(self.normalizer)
+        saveNormalizer(self.trainNormalizer)
 
-    def extractData(self):
-        data = self.fullBase.copy()
-        if "time" in data.columns:
-            data.drop("time", axis=1)
+    def extract(self):
+        fullBase = self.fullBase.copy()
+        fullBase = removeColumnTime(fullBase)
+        colsT, colsE = getIndexColumns(fullBase)
 
-        data = data[: -env.numberTest].values
-        normalizedData = self.normalizer.fit_transform(data)
+        fullBaseNormalized = self.trainNormalizer.fit_transform(fullBase.values)
+        trainingBase = fullBaseNormalized[: -env.numberTest]
 
-        colsT, colsE = getIndexColumns(self.fullBase)
-
-        for i in range(env.timeSteps, len(data)):
-            self.predictors.append(normalizedData[i - env.timeSteps : i, colsT])
-            self.realPrices.append(normalizedData[i, colsE])
+        for i in range(env.timeSteps, trainingBase.shape[0]):
+            self.predictors.append(trainingBase[i - env.timeSteps : i, colsT])
+            self.realPrices.append(trainingBase[i, colsE])
 
         self.predictors = np.array(self.predictors)
         self.realPrices = np.array(self.realPrices)

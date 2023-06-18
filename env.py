@@ -1,5 +1,5 @@
 selectLimit = None  # None or number (int)
-numberTest = 5
+numberTest = 6
 timeSteps = 20
 withDropout = True
 lstmRepetition = 0
@@ -7,7 +7,7 @@ columnsTraining = ["open", "close"]
 columnsExpected = ["close"]
 denseActivation = "sigmoid"  # 'sigmoid' / 'linear'
 compilerOptmizer = "adam"  # 'adam' / 'rmsprop'
-regressorEpocs = 5
+regressorEpocs = 10
 regressorBatchSize = 10
 
 # ACCOUNT

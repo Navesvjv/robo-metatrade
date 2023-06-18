@@ -2,6 +2,7 @@ from src.db import DbConnection
 from src.mt import Metatrader
 from src.check import Checks
 from src.lstm_train import LstmTraining
+from src.lstm_test import LstmTest
 
 # from src.lstm import LSTMModel
 
@@ -13,6 +14,7 @@ class Init:
 
         self.mt = Metatrader()
         self.lstmTraining = LstmTraining(self.dbConnection.fetchAllWinH1())
+        self.lstmTest = LstmTest(self.dbConnection.fetchAllWinH1())
 
         # self.lstm = LSTMModel()
 
