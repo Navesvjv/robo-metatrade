@@ -14,6 +14,10 @@ def getIndexColumns(fullBase):
     return colsT, colsE
 
 
+def getIndexColumnsToyTest(fullBase):
+    return [fullBase.columns.get_loc(str(i)) for i in ["open", "close"]]
+
+
 def saveNormalizer(
     normalizer,
     type="train",

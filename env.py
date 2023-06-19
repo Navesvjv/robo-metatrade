@@ -1,13 +1,13 @@
 selectLimit = None  # None or number (int)
-numberTest = 6
-timeSteps = 20
-withDropout = True
-lstmRepetition = 0
-columnsTraining = ["open", "close"]
+numberTest = 100
+timeSteps = 100
+withDropout = False
+lstmRepetition = 3  # Pelo menos 1
+columnsTraining = ["open", "close"]  # sempre ter open e close
 columnsExpected = ["close"]
 denseActivation = "sigmoid"  # 'sigmoid' / 'linear'
-compilerOptmizer = "adam"  # 'adam' / 'rmsprop'
-regressorEpocs = 10
+compilerOptmizer = "rmsprop"  # 'adam' / 'rmsprop'
+regressorEpocs = 100
 regressorBatchSize = 10
 
 # ACCOUNT

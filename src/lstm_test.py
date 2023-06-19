@@ -1,7 +1,12 @@
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from src.config import getConfig
-from src.utils import getNormalizer, getIndexColumns, removeColumnTime
+from src.utils import (
+    getNormalizer,
+    getIndexColumns,
+    removeColumnTime,
+    getIndexColumnsToyTest,
+)
 from keras.models import load_model
 
 env = getConfig()
@@ -10,6 +15,7 @@ env = getConfig()
 class LstmTest:
     xTest = []
     yTest = None
+    predictions = None
     normalizer = MinMaxScaler(feature_range=(0, 1))
 
     def __init__(self, fullBase):
@@ -18,19 +24,21 @@ class LstmTest:
         self.testNormalizer = MinMaxScaler(feature_range=(0, 1))
         self.extract()
         self.predict()
+        self.compare()
 
     def extract(self):
         fullBase = self.fullBase.copy()
         fullBase = removeColumnTime(fullBase)
         colsT, colsE = getIndexColumns(fullBase)
 
-        self.yTest = fullBase.iloc[-env.numberTest :, colsE]
+        self.yTest = fullBase.iloc[-env.numberTest :, getIndexColumnsToyTest(fullBase)]
+        self.yTest = self.yTest.reset_index()
         self.testNormalizer.fit_transform(fullBase.iloc[:, colsE].values)
 
         testBase = fullBase[-env.timeSteps - env.numberTest :].values
         testBase = self.trainNormalizer.transform(testBase)
 
-        for i in range(env.timeSteps, len(testBase)):
+        for i in range(env.timeSteps, testBase.shape[0]):
             self.xTest.append(testBase[i - env.timeSteps : i, colsT])
 
         self.xTest = np.array(self.xTest)
@@ -44,16 +52,28 @@ class LstmTest:
 
     def predict(self):
         model = load_model(env.filePath + "model.h5")
-        predictions = model.predict(self.xTest)
-        print(predictions.shape)
+        self.predictions = model.predict(self.xTest)
+        self.predictions = self.testNormalizer.inverse_transform(self.predictions)
+        print(self.predictions)
+        print(self.yTest)
 
-        predictions_reshaped = predictions.reshape(
-            (predictions.shape[0], predictions.shape[1])
-        )
-        print(predictions_reshaped.shape)
+    def compare(self):
+        soma = 0
+        for i, row in self.yTest.iterrows():
+            dif = row["open"] - row["close"]
+            dif_calc = row["open"] - self.predictions[i][0]
 
-        # a = np.array(predictions)
-        # a = a.reshape(a, (a.shape[0], a.shape[1]))
+            if (dif > 0 and dif_calc > 0) or (dif < 0 and dif_calc < 0):
+                soma += abs(dif)
+            else:
+                soma -= abs(dif)
 
-        b = self.testNormalizer.inverse_transform(predictions_reshaped)
-        print(b)
+            print(
+                f"OPEN: {row['open']} - CLOSE: {row['close']} === {dif} / {'UP' if dif < 0 else 'DOWN'}"
+            )
+            print(f"Calculated: {dif_calc}")
+            print("\n")
+
+        print(f"RESULTING POINTS: {soma}")
+        with open(env.filePath + "arquivo.txt", "w") as arquivo:
+            arquivo.write(f"Calculated: {soma}")

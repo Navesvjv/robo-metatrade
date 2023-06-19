@@ -61,7 +61,7 @@ class LstmTraining:
         for i in range(env.lstmRepetition):
             if i == (env.lstmRepetition - 1):
                 returnSequences = False
-            self.regressor.add(LSTM(units=50, return_sequences=returnSequences))
+            self.regressor.add(LSTM(units=100, return_sequences=returnSequences))
             if env.withDropout:
                 self.regressor.add(Dropout(0.3))
 
